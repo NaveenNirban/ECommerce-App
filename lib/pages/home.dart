@@ -87,89 +87,93 @@ class _HomeState extends State<Home> {
     return SafeArea(
       child: Scaffold(
         appBar: appBar,
-        body: Container(
-          child: Column(
-            children: [
-              Container(
-                height: safeHeight,
-                child: FutureBuilder<List<Product>>(
-                  future: _fetchProducts(),
-                  builder: (context, AsyncSnapshot snapshot) {
-                    if (snapshot.hasData) {
-                      return ListView.builder(
-                          itemCount: snapshot.data.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            return Card(
-                                elevation: 5,
-                                child: ListTile(
-                                  trailing: InkWell(
-                                      onTap: () {
-                                        Provider.of<CartModel>(context,
-                                                listen: false)
-                                            .add(snapshot.data[index]);
-                                      },
-                                      child: Icon(Icons.add_shopping_cart)),
-                                  leading: Container(
-                                    child: Stack(children: [
-                                      Padding(
-                                        padding: EdgeInsets.only(
-                                            left: width * 0.05,
-                                            top: width * 0.03),
-                                        child: Image.network(
-                                            snapshot.data[index].image),
-                                      ),
-                                      Consumer<FavModel>(
-                                          builder: (context, fav, child) {
-                                        return fav
-                                                .getFav(snapshot.data[index].id)
-                                            ? InkWell(
-                                                onTap: () {
-                                                  Provider.of<FavModel>(context,
-                                                          listen: false)
-                                                      .remove(snapshot
-                                                          .data[index].id);
-                                                },
-                                                child: FaIcon(
-                                                  FontAwesomeIcons.solidHeart,
-                                                  color: Colors.red,
-                                                  size: 18,
-                                                ),
-                                              )
-                                            : InkWell(
-                                                onTap: () {
-                                                  Provider.of<FavModel>(context,
-                                                          listen: false)
-                                                      .add(snapshot
-                                                          .data[index].id);
-                                                },
-                                                child: FaIcon(
-                                                  FontAwesomeIcons.heart,
-                                                  size: 18,
-                                                ),
-                                              );
-                                      }),
+        body: SingleChildScrollView(
+          child: Container(
+            child: Column(
+              children: [
+                Container(
+                  height: safeHeight,
+                  child: FutureBuilder<List<Product>>(
+                    future: _fetchProducts(),
+                    builder: (context, AsyncSnapshot snapshot) {
+                      if (snapshot.hasData) {
+                        return ListView.builder(
+                            itemCount: snapshot.data.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return Card(
+                                  elevation: 5,
+                                  child: ListTile(
+                                    trailing: InkWell(
+                                        onTap: () {
+                                          Provider.of<CartModel>(context,
+                                                  listen: false)
+                                              .add(snapshot.data[index]);
+                                        },
+                                        child: Icon(Icons.add_shopping_cart)),
+                                    leading: Container(
+                                      child: Stack(children: [
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              left: width * 0.05,
+                                              top: width * 0.03),
+                                          child: Image.network(
+                                              snapshot.data[index].image),
+                                        ),
+                                        Consumer<FavModel>(
+                                            builder: (context, fav, child) {
+                                          return fav.getFav(
+                                                  snapshot.data[index].id)
+                                              ? InkWell(
+                                                  onTap: () {
+                                                    Provider.of<FavModel>(
+                                                            context,
+                                                            listen: false)
+                                                        .remove(snapshot
+                                                            .data[index].id);
+                                                  },
+                                                  child: FaIcon(
+                                                    FontAwesomeIcons.solidHeart,
+                                                    color: Colors.red,
+                                                    size: 18,
+                                                  ),
+                                                )
+                                              : InkWell(
+                                                  onTap: () {
+                                                    Provider.of<FavModel>(
+                                                            context,
+                                                            listen: false)
+                                                        .add(snapshot
+                                                            .data[index].id);
+                                                  },
+                                                  child: FaIcon(
+                                                    FontAwesomeIcons.heart,
+                                                    size: 18,
+                                                  ),
+                                                );
+                                        }),
+                                      ]),
+                                    ),
+                                    title: Text(snapshot.data[index].title),
+                                    subtitle: Wrap(children: [
+                                      Text(
+                                        snapshot.data[index].description,
+                                        maxLines: 3,
+                                        overflow: TextOverflow.ellipsis,
+                                      )
                                     ]),
-                                  ),
-                                  title: Text(snapshot.data[index].title),
-                                  subtitle: Wrap(children: [
-                                    Text(
-                                      snapshot.data[index].description,
-                                      maxLines: 3,
-                                      overflow: TextOverflow.ellipsis,
-                                    )
-                                  ]),
-                                ));
-                          });
-                    } else if (snapshot.hasError) {
-                      return Text('${snapshot.error.toString()}');
-                    }
+                                  ));
+                            });
+                      } else if (snapshot.hasError) {
+                        return Text('${snapshot.error.toString()}');
+                      }
 
-                    // By default, show a loading spinner.
-                    return Center(child: const CircularProgressIndicator());
-                  },
+                      // By default, show a loading spinner.
+                      return Center(child: const CircularProgressIndicator());
+                    },
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

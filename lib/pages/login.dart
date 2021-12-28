@@ -14,6 +14,8 @@ class _LoginState extends State<Login> {
   var username;
   Map<String, String> data = {};
 
+  bool isHidden = true;
+
   /// Global Key to handling form
   final _formKey = GlobalKey<FormState>();
 
@@ -54,8 +56,8 @@ class _LoginState extends State<Login> {
     double height = MediaQuery.of(context).size.height;
     double safeHeight = height - MediaQuery.of(context).padding.top;
     double width = MediaQuery.of(context).size.width;
-    _emailController.text = "flutter@ennovations.com";
-    _passwordController.text = "Flutter@1122021";
+    /*_emailController.text = "flutter@ennovations.com";
+    _passwordController.text = "Flutter@1122021";*/
 
     return SafeArea(
         child: Scaffold(
@@ -73,12 +75,16 @@ class _LoginState extends State<Login> {
                     focusNode: _emailFocusNode,
                     controller: _emailController,
                     decoration: InputDecoration(
-                        hintText: 'Username / Email',
+                        hintText: 'Email',
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10.0))),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Username cannot be empty';
+                      }
+                      if (!RegExp("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+.[a-z]")
+                          .hasMatch(value)) {
+                        return 'Please a valid Email';
                       }
                       return null;
                     },
@@ -89,7 +95,18 @@ class _LoginState extends State<Login> {
                   TextFormField(
                     focusNode: _passwordFocusNode,
                     controller: _passwordController,
+                    maxLength: 20,
+                    obscureText: isHidden,
                     decoration: InputDecoration(
+                        suffixIcon: IconButton(
+                            icon: Icon(isHidden
+                                ? Icons.visibility
+                                : Icons.visibility_off),
+                            onPressed: () {
+                              setState(() {
+                                isHidden = !isHidden;
+                              });
+                            }),
                         hintText: '*******',
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10.0))),
